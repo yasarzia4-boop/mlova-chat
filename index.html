@@ -2,37 +2,124 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MLOVA Chat</title>
+<title>MLOVA Global Chat</title>
+
 <style>
-body{margin:0;background:black;color:white;font-family:sans-serif;}
-header{padding:15px;background:#111;text-align:center;}
-#chat{height:80vh;overflow:auto;padding:10px;}
-.msg{background:#222;margin:5px;padding:10px;border-radius:10px;}
-input{width:75%;padding:10px;}
-button{padding:10px;}
+body{
+  margin:0;
+  font-family:sans-serif;
+  background:#000;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+}
+
+header{
+  background:#111;
+  padding:15px;
+  text-align:center;
+  font-size:20px;
+  font-weight:bold;
+}
+
+#chat{
+  flex:1;
+  overflow:auto;
+  padding:10px;
+}
+
+.msg{
+  background:#222;
+  padding:10px;
+  margin:5px;
+  border-radius:10px;
+}
+
+.input{
+  display:flex;
+  padding:10px;
+  background:#111;
+}
+
+input{
+  flex:1;
+  padding:10px;
+  border:none;
+  outline:none;
+}
+
+button{
+  padding:10px;
+  margin-left:10px;
+  background:white;
+  color:black;
+  border:none;
+}
 </style>
+
 </head>
 
 <body>
 
-<header>MLOVA 💬 Chat</header>
+<header>💬 MLOVA GLOBAL CHAT</header>
 
 <div id="chat"></div>
 
-<input id="text">
-<button onclick="send()">Send</button>
+<div class="input">
+  <input id="name" placeholder="Your name">
+</div>
 
-<script>
-function send(){
-let t=document.getElementById("text");
-let c=document.getElementById("chat");
-if(t.value!=""){
-let d=document.createElement("div");
-d.className="msg";
-d.innerText=t.value;
-c.appendChild(d);
-t.value="";
-}
+<div class="input">
+  <input id="msg" placeholder="Write message">
+  <button onclick="send()">Send</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBA-Bzi6vLkyxJzsg",
+  authDomain: "mlova-chat.firebaseapp.com",
+  projectId: "mlova-chat",
+  storageBucket: "mlova-chat.firebasestorage.app",
+  messagingSenderId: "1039711846",
+  appId: "1:1039711846:web:18f804"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const q = query(collection(db,"messages"), orderBy("time"));
+
+const chat = document.getElementById("chat");
+
+onSnapshot(q, (snap)=>{
+  chat.innerHTML="";
+  snap.forEach(doc=>{
+    let d = doc.data();
+    let div = document.createElement("div");
+    div.className="msg";
+    div.innerText = d.name + ": " + d.text;
+    chat.appendChild(div);
+  });
+});
+
+window.send = async function(){
+  let name = document.getElementById("name").value;
+  let msg = document.getElementById("msg").value;
+
+  if(name.trim()!=="" && msg.trim()!==""){
+    await addDoc(collection(db,"messages"),{
+      name:name,
+      text:msg,
+      time:Date.now()
+    });
+
+    document.getElementById("msg").value="";
+  }
 }
 </script>
 
