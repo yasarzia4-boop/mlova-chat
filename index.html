@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>MLOVA Chat</title>
+<style>
+body{margin:0;background:black;color:white;font-family:sans-serif;}
+header{padding:15px;background:#111;text-align:center;}
+#chat{height:80vh;overflow:auto;padding:10px;}
+.msg{background:#222;margin:5px;padding:10px;border-radius:10px;}
+input{width:75%;padding:10px;}
+button{padding:10px;}
+</style>
+</head>
+
+<body>
+
+<header>MLOVA 💬 Chat</header>
+
+<div id="chat"></div>
+
+<input id="text">
+<button onclick="send()">Send</button>
+
+<script>
+function send(){
+let t=document.getElementById("text");
+let c=document.getElementById("chat");
+if(t.value!=""){
+let d=document.createElement("div");
+d.className="msg";
+d.innerText=t.value;
+c.appendChild(d);
+t.value="";
+}
+}
+</script>
+
+</body>
+</html>
